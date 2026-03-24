@@ -1,0 +1,35 @@
+{
+  "name": "steelbook-designer",
+  "version": "1.0.0",
+  "description": "SteelBook Cover Designer - Create custom metal case artwork",
+  "main": "main.js",
+  "author": "Jonathan Doolan",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable",
+    "build-installer": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.doolanjw.steelbook-designer",
+    "productName": "SteelBook Designer",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": ["portable"]
+    },
+    "portable": {
+      "artifactName": "SteelBook-Designer-Portable.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "SteelBook-Designer-Setup.exe"
+    }
+  }
+}

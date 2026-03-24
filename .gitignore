@@ -1,0 +1,4 @@
+node_modules/
+dist/
+*.7z
+CLAUDE_CODE_HANDOFF.md
