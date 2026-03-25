@@ -828,6 +828,170 @@
             margin-top: 0.15rem;
         }
 
+        /* Artwork Search */
+        .artwork-search-bar {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
+        }
+        .artwork-search-bar input {
+            flex: 1;
+            padding: 0.5rem 0.7rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .artwork-search-bar input:focus {
+            border-color: var(--accent);
+        }
+        .artwork-search-bar button {
+            padding: 0.5rem 0.8rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .artwork-search-bar button:hover {
+            background: var(--accent-hover);
+        }
+        .artwork-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 0.6rem;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .artwork-result-card {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            background: var(--bg-input);
+        }
+        .artwork-result-card:hover {
+            border-color: var(--accent);
+            transform: scale(1.03);
+        }
+        .artwork-result-card img {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            display: block;
+        }
+        .artwork-result-card.landscape img {
+            aspect-ratio: 16/9;
+        }
+        .artwork-result-card .card-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.25rem 0.35rem;
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            font-size: 0.6rem;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .artwork-result-card .card-type {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            padding: 1px 5px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.55rem;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .artwork-search-status {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        .artwork-search-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+        .artwork-search-links a {
+            padding: 0.3rem 0.6rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+        .artwork-search-links a:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .tmdb-api-setup {
+            padding: 0.5rem 0.6rem;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .tmdb-api-setup input {
+            width: 100%;
+            margin-top: 0.3rem;
+            padding: 0.35rem 0.5rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+        .tmdb-api-setup a {
+            color: var(--accent);
+        }
+        .artwork-panel-picker {
+            display: flex;
+            gap: 0.3rem;
+            padding: 0.4rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .artwork-panel-picker button {
+            padding: 0.3rem 0.6rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        .artwork-panel-picker button:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
         /* Spine Logo Zones */
         .spine-logo-zone {
             border: 1px dashed var(--border);
@@ -2172,42 +2336,61 @@
                         </div>
                     </div>
 
-                    <!-- QUICK LINKS ACCORDION -->
+                    <!-- ARTWORK SEARCH ACCORDION -->
                     <div class="accordion-section collapsed" id="accordion-links">
                         <div class="accordion-header" tabindex="0" role="button" onclick="toggleAccordion('links')">
-                            <span class="accordion-title">🔗 Find Artwork</span>
+                            <span class="accordion-title">🔍 Find Artwork</span>
                             <span class="accordion-arrow">▼</span>
                         </div>
                         <div class="accordion-content">
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                <a href="https://theposterdb.com/" target="_blank" rel="noopener noreferrer" class="quick-link">
-                                    <span>ThePosterDB</span>
-                                    <span class="quick-link-desc">Curated movie posters</span>
-                                </a>
-                                <a href="https://www.movieposterdb.com/" target="_blank" rel="noopener noreferrer" class="quick-link">
-                                    <span>MoviePosterDB</span>
-                                    <span class="quick-link-desc">Large poster archive</span>
-                                </a>
-                                <a href="https://fanart.tv/movie-fanart/" target="_blank" rel="noopener noreferrer" class="quick-link">
-                                    <span>Fanart.tv</span>
-                                    <span class="quick-link-desc">Movie posters & disc art</span>
-                                </a>
-                                <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" class="quick-link">
-                                    <span>TMDB</span>
-                                    <span class="quick-link-desc">High-res movie posters</span>
-                                </a>
-                                <a href="https://www.deviantart.com/tag/steelbook" target="_blank" rel="noopener noreferrer" class="quick-link">
-                                    <span>DeviantArt</span>
-                                    <span class="quick-link-desc">Custom SteelBook art</span>
-                                </a>
-                                <a href="https://www.reddit.com/r/SteelBooks/" target="_blank" rel="noopener noreferrer" class="quick-link">
-                                    <span>r/SteelBooks</span>
-                                    <span class="quick-link-desc">Community & inspiration</span>
-                                </a>
-                                <a href="https://www.etsy.com/search?q=steelbook%20stickers" target="_blank" rel="noopener noreferrer" class="quick-link">
-                                    <span>Etsy (The Steelverse)</span>
-                                    <span class="quick-link-desc">Pre-made stickers & magnets</span>
-                                </a>
+                            <!-- Search Bar -->
+                            <div class="artwork-search-bar">
+                                <input type="text" id="artwork-search-input" placeholder="Search movie or TV show..."
+                                    onkeydown="if(event.key==='Enter')searchArtwork()">
+                                <button onclick="searchArtwork()">Search</button>
+                            </div>
+
+                            <!-- TMDB API Key Setup (shown if no key) -->
+                            <div class="tmdb-api-setup" id="tmdb-api-setup">
+                                🎬 For image results, enter a free <a href="https://www.themoviedb.org/settings/api" target="_blank">TMDB API key</a> (sign up → Settings → API):
+                                <input type="text" id="tmdb-api-key-input" placeholder="Paste your TMDB API key (v3 auth)"
+                                    onchange="saveTmdbApiKey(this.value)">
+                            </div>
+
+                            <!-- Results Area -->
+                            <div id="artwork-results"></div>
+
+                            <!-- Also Search On (shown after search) -->
+                            <div id="artwork-search-links-container" style="display:none;">
+                                <div style="font-size:0.7rem; color:var(--text-secondary); margin-bottom:0.3rem;">Also search on:</div>
+                                <div class="artwork-search-links" id="artwork-search-links"></div>
+                            </div>
+
+                            <!-- Browse Links (shown when no search) -->
+                            <div id="artwork-browse-links">
+                                <div style="font-size:0.7rem; color:var(--text-secondary); margin-bottom:0.4rem;">Or browse:</div>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <a href="https://theposterdb.com/" target="_blank" rel="noopener noreferrer" class="quick-link">
+                                        <span>ThePosterDB</span>
+                                        <span class="quick-link-desc">Curated movie posters</span>
+                                    </a>
+                                    <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" class="quick-link">
+                                        <span>TMDB</span>
+                                        <span class="quick-link-desc">High-res movie posters</span>
+                                    </a>
+                                    <a href="https://fanart.tv/movie-fanart/" target="_blank" rel="noopener noreferrer" class="quick-link">
+                                        <span>Fanart.tv</span>
+                                        <span class="quick-link-desc">Movie posters & disc art</span>
+                                    </a>
+                                    <a href="https://www.deviantart.com/tag/steelbook" target="_blank" rel="noopener noreferrer" class="quick-link">
+                                        <span>DeviantArt</span>
+                                        <span class="quick-link-desc">Custom SteelBook art</span>
+                                    </a>
+                                    <a href="https://www.reddit.com/r/SteelBooks/" target="_blank" rel="noopener noreferrer" class="quick-link">
+                                        <span>r/SteelBooks</span>
+                                        <span class="quick-link-desc">Community & inspiration</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2956,6 +3139,7 @@
             restoreFromLocalStorage();
             updatePreview();
             initDragDrop();
+            initArtworkSearch();
             
             // Strength slider label update
             const strengthSlider = document.getElementById('remix-strength');
@@ -3221,6 +3405,257 @@
             if (section) {
                 section.classList.toggle('collapsed');
             }
+        }
+
+        // ============ ARTWORK SEARCH ============
+        const ARTWORK_SEARCH_SITES = [
+            { name: 'ThePosterDB', url: q => `https://theposterdb.com/search?term=${encodeURIComponent(q)}` },
+            { name: 'TMDB', url: q => `https://www.themoviedb.org/search?query=${encodeURIComponent(q)}` },
+            { name: 'Fanart.tv', url: q => `https://fanart.tv/?s=${encodeURIComponent(q)}` },
+            { name: 'DeviantArt', url: q => `https://www.deviantart.com/search?q=${encodeURIComponent(q + ' steelbook')}` },
+            { name: 'MoviePosterDB', url: q => `https://www.movieposterdb.com/search?q=${encodeURIComponent(q)}` },
+            { name: 'Google Images', url: q => `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q + ' steelbook cover art high resolution')}` },
+        ];
+
+        function getTmdbApiKey() {
+            return localStorage.getItem('tmdb_api_key') || '';
+        }
+
+        function saveTmdbApiKey(key) {
+            const trimmed = key.trim();
+            if (trimmed) {
+                localStorage.setItem('tmdb_api_key', trimmed);
+                document.getElementById('tmdb-api-setup').style.display = 'none';
+                showToast('TMDB API key saved!', 'success');
+            }
+        }
+
+        function initArtworkSearch() {
+            const key = getTmdbApiKey();
+            if (key) {
+                document.getElementById('tmdb-api-setup').style.display = 'none';
+            }
+            const savedKey = getTmdbApiKey();
+            if (savedKey) {
+                document.getElementById('tmdb-api-key-input').value = savedKey;
+            }
+        }
+
+        async function searchArtwork() {
+            const query = document.getElementById('artwork-search-input').value.trim();
+            if (!query) return;
+
+            const resultsDiv = document.getElementById('artwork-results');
+            const linksContainer = document.getElementById('artwork-search-links-container');
+            const linksDiv = document.getElementById('artwork-search-links');
+            const browseLinks = document.getElementById('artwork-browse-links');
+
+            // Show search links for other sites
+            linksDiv.innerHTML = ARTWORK_SEARCH_SITES.map(site =>
+                `<a href="${site.url(query)}" target="_blank" rel="noopener noreferrer">${site.name}</a>`
+            ).join('');
+            linksContainer.style.display = 'block';
+            browseLinks.style.display = 'none';
+
+            const apiKey = getTmdbApiKey();
+            if (!apiKey) {
+                resultsDiv.innerHTML = '<div class="artwork-search-status">Enter a TMDB API key above to see image results, or use the search links below.</div>';
+                document.getElementById('tmdb-api-setup').style.display = 'block';
+                return;
+            }
+
+            resultsDiv.innerHTML = '<div class="artwork-search-status">Searching...</div>';
+
+            try {
+                // Search both movies and TV shows
+                const [movieRes, tvRes] = await Promise.all([
+                    fetch(`https://api.themoviedb.org/3/search/movie?api_key=${encodeURIComponent(apiKey)}&query=${encodeURIComponent(query)}&include_adult=false`),
+                    fetch(`https://api.themoviedb.org/3/search/tv?api_key=${encodeURIComponent(apiKey)}&query=${encodeURIComponent(query)}&include_adult=false`)
+                ]);
+
+                if (!movieRes.ok || !tvRes.ok) {
+                    if (movieRes.status === 401) {
+                        resultsDiv.innerHTML = '<div class="artwork-search-status">Invalid API key. Check your TMDB key and try again.</div>';
+                        document.getElementById('tmdb-api-setup').style.display = 'block';
+                        return;
+                    }
+                    throw new Error('API error');
+                }
+
+                const [movieData, tvData] = await Promise.all([movieRes.json(), tvRes.json()]);
+
+                // Collect top results with posters
+                const movieResults = (movieData.results || []).filter(m => m.poster_path).slice(0, 6);
+                const tvResults = (tvData.results || []).filter(t => t.poster_path).slice(0, 4);
+
+                if (movieResults.length === 0 && tvResults.length === 0) {
+                    resultsDiv.innerHTML = '<div class="artwork-search-status">No results found. Try the links below.</div>';
+                    return;
+                }
+
+                // Now fetch images for the top result to get backdrops too
+                const allResults = [];
+
+                for (const movie of movieResults) {
+                    allResults.push({
+                        id: movie.id,
+                        type: 'movie',
+                        title: movie.title,
+                        year: movie.release_date ? movie.release_date.substring(0, 4) : '',
+                        poster: `https://image.tmdb.org/t/p/w342${movie.poster_path}`,
+                        posterFull: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
+                        backdrop: movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : null,
+                        backdropThumb: movie.backdrop_path ? `https://image.tmdb.org/t/p/w300${movie.backdrop_path}` : null,
+                    });
+                }
+
+                for (const tv of tvResults) {
+                    allResults.push({
+                        id: tv.id,
+                        type: 'tv',
+                        title: tv.name,
+                        year: tv.first_air_date ? tv.first_air_date.substring(0, 4) : '',
+                        poster: `https://image.tmdb.org/t/p/w342${tv.poster_path}`,
+                        posterFull: `https://image.tmdb.org/t/p/original${tv.poster_path}`,
+                        backdrop: tv.backdrop_path ? `https://image.tmdb.org/t/p/original${tv.backdrop_path}` : null,
+                        backdropThumb: tv.backdrop_path ? `https://image.tmdb.org/t/p/w300${tv.backdrop_path}` : null,
+                    });
+                }
+
+                // Render results
+                let html = '<div class="artwork-results">';
+                for (const item of allResults) {
+                    const label = item.title + (item.year ? ` (${item.year})` : '');
+                    // Poster card
+                    html += `<div class="artwork-result-card" onclick="artworkPickPanel('${item.posterFull.replace(/'/g, "\\'")}')" title="${label} — Poster (click to use)">
+                        <img src="${item.poster}" alt="${label}" loading="lazy">
+                        <span class="card-type">Poster</span>
+                        <span class="card-label">${label}</span>
+                    </div>`;
+                    // Backdrop card (great for full wraps or back covers)
+                    if (item.backdropThumb) {
+                        html += `<div class="artwork-result-card landscape" onclick="artworkPickPanel('${item.backdrop.replace(/'/g, "\\'")}')" title="${label} — Backdrop (click to use)">
+                            <img src="${item.backdropThumb}" alt="${label} backdrop" loading="lazy">
+                            <span class="card-type">Backdrop</span>
+                            <span class="card-label">${label}</span>
+                        </div>`;
+                    }
+                }
+                html += '</div>';
+
+                // Also fetch additional images for the #1 movie result
+                if (movieResults.length > 0) {
+                    try {
+                        const imgRes = await fetch(`https://api.themoviedb.org/3/movie/${movieResults[0].id}/images?api_key=${encodeURIComponent(apiKey)}`);
+                        if (imgRes.ok) {
+                            const imgData = await imgRes.json();
+                            const extraPosters = (imgData.posters || []).slice(1, 7); // skip first (already shown)
+                            const extraBackdrops = (imgData.backdrops || []).slice(1, 5);
+                            if (extraPosters.length > 0 || extraBackdrops.length > 0) {
+                                html += `<div style="font-size:0.7rem; color:var(--text-secondary); margin:0.5rem 0 0.3rem;">More images for "${movieResults[0].title}":</div>`;
+                                html += '<div class="artwork-results">';
+                                for (const p of extraPosters) {
+                                    const fullUrl = `https://image.tmdb.org/t/p/original${p.file_path}`;
+                                    const thumbUrl = `https://image.tmdb.org/t/p/w185${p.file_path}`;
+                                    const langLabel = p.iso_639_1 ? ` [${p.iso_639_1.toUpperCase()}]` : '';
+                                    html += `<div class="artwork-result-card" onclick="artworkPickPanel('${fullUrl.replace(/'/g, "\\'")}')" title="Poster${langLabel} — ${p.width}×${p.height}">
+                                        <img src="${thumbUrl}" loading="lazy">
+                                        <span class="card-type">Poster</span>
+                                        <span class="card-label">${p.width}×${p.height}${langLabel}</span>
+                                    </div>`;
+                                }
+                                for (const b of extraBackdrops) {
+                                    const fullUrl = `https://image.tmdb.org/t/p/original${b.file_path}`;
+                                    const thumbUrl = `https://image.tmdb.org/t/p/w300${b.file_path}`;
+                                    html += `<div class="artwork-result-card landscape" onclick="artworkPickPanel('${fullUrl.replace(/'/g, "\\'")}')" title="Backdrop — ${b.width}×${b.height}">
+                                        <img src="${thumbUrl}" loading="lazy">
+                                        <span class="card-type">Backdrop</span>
+                                        <span class="card-label">${b.width}×${b.height}</span>
+                                    </div>`;
+                                }
+                                html += '</div>';
+                            }
+                        }
+                    } catch(e) { /* extra images are optional */ }
+                }
+
+                resultsDiv.innerHTML = html;
+
+            } catch (err) {
+                resultsDiv.innerHTML = `<div class="artwork-search-status">Search failed: ${err.message}. Try the links below.</div>`;
+            }
+        }
+
+        // When user clicks an artwork result, ask which panel to load it into
+        let artworkPendingUrl = null;
+        function artworkPickPanel(imageUrl) {
+            artworkPendingUrl = imageUrl;
+            // Show panel picker overlay
+            const existing = document.querySelector('.artwork-panel-picker');
+            if (existing) existing.remove();
+
+            const picker = document.createElement('div');
+            picker.className = 'artwork-panel-picker';
+            picker.innerHTML = `
+                <button onclick="artworkLoadToPanel('front')">Front</button>
+                <button onclick="artworkLoadToPanel('back')">Back</button>
+                <button onclick="artworkLoadToPanel('spine')">Spine</button>
+                <button onclick="artworkLoadToPanel('inside-left')">Inside L</button>
+                <button onclick="artworkLoadToPanel('inside-right')">Inside R</button>
+                <button onclick="this.parentElement.remove()" style="background:transparent;border-color:var(--text-secondary);">✕</button>
+            `;
+            document.getElementById('artwork-results').appendChild(picker);
+        }
+
+        async function artworkLoadToPanel(panelType) {
+            const picker = document.querySelector('.artwork-panel-picker');
+            if (picker) picker.remove();
+            if (!artworkPendingUrl) return;
+
+            showToast(`Loading image for ${panelType}...`, 'info');
+
+            try {
+                // Fetch the image and convert to data URL
+                const response = await fetch(artworkPendingUrl);
+                const blob = await response.blob();
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    images[panelType] = dataUrl;
+                    originalImages[panelType] = dataUrl;
+                    imageAdjustments[panelType] = { brightness: 0, contrast: 0, saturation: 0, hue: 0, filter: 'none' };
+
+                    const zone = document.getElementById(`${panelType}-zone`);
+                    if (zone) {
+                        zone.classList.add('has-image');
+                        let img = zone.querySelector('img');
+                        if (!img) {
+                            img = document.createElement('img');
+                            zone.insertBefore(img, zone.querySelector('.remove-btn'));
+                        }
+                        img.src = dataUrl;
+                        const label = zone.querySelector('.upload-label');
+                        if (label) label.style.display = 'none';
+                    }
+
+                    const badge = document.getElementById(`${panelType}-badge`);
+                    if (badge) {
+                        badge.textContent = 'Ready';
+                        badge.classList.add('has-image');
+                    }
+
+                    checkImageDPI(dataUrl, panelType);
+                    updatePreview();
+                    saveToLocalStorage();
+                    showToast(`Image loaded to ${panelType}!`, 'success');
+                };
+                reader.readAsDataURL(blob);
+            } catch (err) {
+                // CORS may block direct fetch — open in new tab as fallback
+                showToast('Cannot load directly (CORS). Opening in new tab — right-click to save, then upload.', 'warning');
+                window.open(artworkPendingUrl, '_blank');
+            }
+            artworkPendingUrl = null;
         }
 
         // ============ PRODUCTION ASSETS ============
