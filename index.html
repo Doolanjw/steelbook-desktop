@@ -2998,13 +2998,15 @@
 
         // ============ LOCAL STORAGE ============
         const STORAGE_KEY = 'steelbook-designer-state';
+        let _saveVersion = 0;
 
         function saveToLocalStorage() {
+            const thisVersion = ++_saveVersion;
             try {
                 // Compress images for storage (reduce to ~200KB each max)
                 const compressedImages = {};
                 const compressionPromises = [];
-                
+
                 Object.keys(images).forEach(key => {
                     if (images[key]) {
                         compressionPromises.push(
@@ -3018,6 +3020,9 @@
                 });
 
                 Promise.all(compressionPromises).then(() => {
+                    // Discard this write if a newer save was triggered while we were compressing
+                    if (thisVersion !== _saveVersion) return;
+
                     const state = {
                         images: compressedImages,
                         spineLogos: spineLogos,
@@ -3039,11 +3044,11 @@
                         // API keys are NOT stored in localStorage for security
                         savedAt: new Date().toISOString()
                     };
-                    
+
                     const stateJson = JSON.stringify(state);
                     const sizeKB = Math.round(stateJson.length / 1024);
                     console.log(`💾 Saving to localStorage (${sizeKB} KB)...`);
-                    
+
                     localStorage.setItem(STORAGE_KEY, stateJson);
                     console.log('💾 Saved to localStorage at', state.savedAt);
                 });
@@ -4427,13 +4432,16 @@
             images[type] = null;
             originalImages[type] = null; // Clear original
             imageAdjustments[type] = { brightness: 0, contrast: 0, saturation: 0, hue: 0, filter: 'none' }; // Reset adjustments
-            
+
             const zone = document.getElementById(`${type}-zone`);
             zone.classList.remove('has-image');
-            
+
             const img = zone.querySelector('img');
             if (img) img.remove();
-            
+            zone.style.backgroundImage = '';
+            zone.style.backgroundSize = '';
+            zone.style.backgroundPosition = '';
+
             const label = zone.querySelector('.upload-label');
             if (label) label.style.display = 'block';
             
@@ -5756,46 +5764,49 @@
         }
 
         function generateProjectThumbnail() {
-            // Create a small thumbnail from the current preview
-            const previewCanvas = document.getElementById('preview-canvas');
-            if (!previewCanvas) return null;
-            
-            const thumbCanvas = document.createElement('canvas');
-            const thumbCtx = thumbCanvas.getContext('2d');
-            
-            // Create a small thumbnail (200px wide)
-            const scale = 200 / previewCanvas.width;
-            thumbCanvas.width = 200;
-            thumbCanvas.height = previewCanvas.height * scale;
-            
-            thumbCtx.drawImage(previewCanvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
-            
-            return thumbCanvas.toDataURL('image/jpeg', 0.7);
+            // Use the first available panel image as the thumbnail
+            const src = images.front || images.back || images.spine || images.insideLeft || images.insideRight;
+            if (!src) return null;
+
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = function() {
+                    const thumbCanvas = document.createElement('canvas');
+                    const thumbCtx = thumbCanvas.getContext('2d');
+                    const scale = 200 / img.width;
+                    thumbCanvas.width = 200;
+                    thumbCanvas.height = img.height * scale;
+                    thumbCtx.drawImage(img, 0, 0, thumbCanvas.width, thumbCanvas.height);
+                    resolve(thumbCanvas.toDataURL('image/jpeg', 0.7));
+                };
+                img.onerror = function() { resolve(null); };
+                img.src = src;
+            });
         }
 
-        function saveCurrentProject() {
+        async function saveCurrentProject() {
             const nameInput = document.getElementById('project-name-input');
             const name = nameInput.value.trim();
-            
+
             if (!name) {
                 showToast('Please enter a project name', 'error');
                 nameInput.focus();
                 return;
             }
-            
+
             // Check if we have any content
-            if (!images.front && !images.back && !images.spine) {
+            if (!images.front && !images.back && !images.spine && !images.insideLeft && !images.insideRight) {
                 showToast('Nothing to save! Add some images first.', 'error');
                 return;
             }
-            
+
             // Create project data
             const project = {
                 id: Date.now().toString(),
                 name: name,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
-                thumbnail: generateProjectThumbnail(),
+                thumbnail: await generateProjectThumbnail(),
                 data: {
                     images: { ...images },
                     originalImages: { ...originalImages },
@@ -5912,7 +5923,7 @@
             }
             
             // Confirm if current work exists
-            if (images.front || images.back || images.spine) {
+            if (images.front || images.back || images.spine || images.insideLeft || images.insideRight) {
                 if (!confirm('Loading this project will replace your current work. Continue?')) {
                     return;
                 }
@@ -5942,7 +5953,7 @@
             if (data.productionAssets) {
                 productionAssets = { ...data.productionAssets };
                 // Update UI checkboxes
-                const enabledCheckbox = document.getElementById('enable-production-assets');
+                const enabledCheckbox = document.getElementById('assets-enable');
                 if (enabledCheckbox) enabledCheckbox.checked = productionAssets.enabled;
             }
             
@@ -5951,26 +5962,35 @@
                 imageAdjustments = { ...data.imageAdjustments };
             }
             
-            // Update all upload zones with thumbnails
+            // Update all upload zones with thumbnails (use <img> to match handleImageUpload)
             ['front', 'back', 'spine', 'insideLeft', 'insideRight'].forEach(panel => {
                 const zone = document.getElementById(`${panel}-zone`);
                 const badge = document.getElementById(`${panel}-badge`);
-                
+
                 if (zone && images[panel]) {
-                    zone.style.backgroundImage = `url(${images[panel]})`;
-                    zone.style.backgroundSize = 'cover';
-                    zone.style.backgroundPosition = 'center';
+                    zone.classList.add('has-image');
+                    let img = zone.querySelector('img');
+                    if (!img) {
+                        img = document.createElement('img');
+                        zone.insertBefore(img, zone.querySelector('.remove-btn'));
+                    }
+                    img.src = images[panel];
+                    const label = zone.querySelector('.upload-label');
+                    if (label) label.style.display = 'none';
                     if (badge) {
                         badge.textContent = 'Loaded';
-                        badge.style.background = 'var(--success)';
-                        badge.style.color = 'white';
+                        badge.classList.add('has-image');
                     }
                 } else if (zone) {
+                    zone.classList.remove('has-image');
                     zone.style.backgroundImage = '';
+                    const img = zone.querySelector('img');
+                    if (img) img.remove();
+                    const label = zone.querySelector('.upload-label');
+                    if (label) label.style.display = 'block';
                     if (badge) {
                         badge.textContent = 'Empty';
-                        badge.style.background = '';
-                        badge.style.color = '';
+                        badge.classList.remove('has-image');
                     }
                 }
             });
@@ -6043,10 +6063,10 @@
             showToast(`Exported "${project.name}"`, 'success');
         }
 
-        function exportCurrentProject() {
+        async function exportCurrentProject() {
             const nameInput = document.getElementById('project-name-input');
             let name = nameInput.value.trim() || 'Untitled_SteelBook';
-            
+
             // Create project data
             const exportData = {
                 version: '2.0',
@@ -6055,7 +6075,7 @@
                 name: name,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
-                thumbnail: generateProjectThumbnail(),
+                thumbnail: await generateProjectThumbnail(),
                 data: {
                     images: { ...images },
                     originalImages: { ...originalImages },
